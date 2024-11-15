@@ -93,18 +93,19 @@ public class Main {
                 }
 
                 if (nextRedRow == nextBlueRow && nextRedCol == nextBlueCol) {
-                    if (i == 0) { // 아래
+                    // 1, -1, ,1, -1
+                    if (i == 0) { // 아래로 이동
                         if (curRed[0] < curBlue[0]) nextRedRow -= 1;
                         else nextBlueRow -= 1;
-                    } else if (i == 1) { // 위
-                        if (curBlue[0] < curRed[0]) nextBlueRow += 1;
+                    } else if (i == 1) { // 위로 이동
+                        if (curRed[0] < curBlue[0]) nextBlueRow += 1;
                         else nextRedRow += 1;
                     } else if (i == 2) { // 오른쪽
                         if (curRed[1] < curBlue[1]) nextRedCol -= 1;
                         else nextBlueCol -= 1;
                     } else if (i == 3) { // 왼쪽
-                        if (curBlue[1] < curRed[1]) nextRedCol += 1;
-                        else nextBlueCol += 1;
+                        if (curRed[1] < curBlue[1]) nextBlueCol += 1;
+                        else nextRedCol += 1;
                     }
                 }
 
