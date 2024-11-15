@@ -55,7 +55,7 @@ public class Main {
         while (!queue.isEmpty()) {
             Candies curCandies = queue.poll();
 
-            if (curCandies.count > 10) {
+            if (curCandies.count >= 10) {
                 System.out.println(-1);
                 return;
             }
