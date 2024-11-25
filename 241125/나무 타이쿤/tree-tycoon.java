@@ -2,7 +2,16 @@ import java.util.*;
 import java.io.*;
 
 public class Main {
-    static int[][] dir = {{0, 1}, {-1, 1}, {-1, 0}, {-1, -1}, {0, -1}, {1, -1}, {1, 0}, {1, 1}};
+    static int[][] dir = {
+        {0, 1},    // → (1)
+        {-1, 1},   // ↗ (2)
+        {-1, 0},   // ↑ (3)
+        {-1, -1},  // ↖ (4)
+        {0, -1},   // ← (5)
+        {1, -1},   // ↙ (6)
+        {1, 0},    // ↓ (7)
+        {1, 1}     // ↘ (8)
+    };
     static int[][] growList = {{-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
     static int N, M;
     static int[][] map;
@@ -11,18 +20,19 @@ public class Main {
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
+
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
         map = new int[N][N];
         planted = new int[N][N];
 
-        // 초기 특수 영양제 위치
-        planted[N - 2][0] = 1;
+        // 초기 특수 영양제 위치 설정
         planted[N - 1][0] = 1;
-        planted[N - 2][1] = 1;
         planted[N - 1][1] = 1;
+        planted[N - 2][0] = 1;
+        planted[N - 2][1] = 1;
 
-        // 리브로수 입력
+        // 리브로수 높이 입력
         for (int i = 0; i < N; i++) {
             st = new StringTokenizer(br.readLine());
             for (int j = 0; j < N; j++) {
@@ -31,65 +41,79 @@ public class Main {
         }
 
         // 이동 규칙 입력
-        ArrayDeque<int[]> deque = new ArrayDeque<>();
+        int[][] moves = new int[M][2];
         for (int i = 0; i < M; i++) {
             st = new StringTokenizer(br.readLine());
-            int d = Integer.parseInt(st.nextToken());
-            int p = Integer.parseInt(st.nextToken());
-            deque.offer(new int[]{d, p});
+            moves[i][0] = Integer.parseInt(st.nextToken()) - 1;
+            moves[i][1] = Integer.parseInt(st.nextToken());
         }
 
-        // m년 동안 반복
-        while (!deque.isEmpty()) {
-            int[] current = deque.poll();
-            int[][] nextPlanted = new int[N][N];
+        // 시뮬레이션 시작
+        for (int t = 0; t < M; t++) {
+            int d = moves[t][0];
+            int p = moves[t][1];
 
             // 1. 이동
+            int[][] nextPlanted = new int[N][N];
             for (int i = 0; i < N; i++) {
                 for (int j = 0; j < N; j++) {
                     if (planted[i][j] == 1) {
-                        int nextRow = ((i + dir[current[0] - 1][0] * current[1]) + N * current[1]) % N;
-                        int nextCol = ((j + dir[current[0] - 1][1] * current[1]) + N * current[1]) % N;
+                        int nextRow = (i + dir[d][0] * p % N + N) % N;
+                        int nextCol = (j + dir[d][1] * p % N + N) % N;
                         nextPlanted[nextRow][nextCol] = 1;
                     }
                 }
             }
             planted = nextPlanted;
 
-            // 2. 성장
+            // 2. 영양제 투입 및 성장
             for (int i = 0; i < N; i++) {
                 for (int j = 0; j < N; j++) {
                     if (planted[i][j] == 1) {
+                        map[i][j] += 1;
+                    }
+                }
+            }
+
+            // 3. 대각선 성장
+            for (int i = 0; i < N; i++) {
+                for (int j = 0; j < N; j++) {
+                    if (planted[i][j] == 1) {
+                        int cnt = 0;
                         for (int[] near : growList) {
                             int nextRow = i + near[0];
                             int nextCol = j + near[1];
-                            if (nextRow >= 0 && nextRow < N && nextCol >= 0 && nextCol < N && map[nextRow][nextCol] > 0) {
-                                map[i][j]++;
+                            if (0 <= nextRow && nextRow < N && 0 <= nextCol && nextCol < N) {
+                                if (map[nextRow][nextCol] > 0) {
+                                    cnt++;
+                                }
                             }
                         }
-                        map[i][j]++;
+                        map[i][j] += cnt;
                     }
                 }
             }
 
-            // 3. 베어서 영양제 생성
+            // 4. 새로운 영양제 생성 및 기존 영양제 제거
+            int[][] newPlanted = new int[N][N];
             for (int i = 0; i < N; i++) {
                 for (int j = 0; j < N; j++) {
-                    if (map[i][j] >= 2 && planted[i][j] == 0) { // 영양제를 투입하지 않은 칸만
+                    if (planted[i][j] == 1) {
+                        planted[i][j] = 0; // 기존 영양제 제거
+                    } else if (map[i][j] >= 2) {
                         map[i][j] -= 2;
-                        planted[i][j] = 1;
-                    } else {
-                        planted[i][j] = 0; // 기존 영양제 초기화
+                        newPlanted[i][j] = 1; // 새로운 영양제 생성
                     }
                 }
             }
+            planted = newPlanted;
         }
 
-        // 리브로수 높이 합 계산
+        // 리브로수 높이의 합 계산
         int answer = 0;
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
-                answer += map[i][j];
+        for (int[] row : map) {
+            for (int h : row) {
+                answer += h;
             }
         }
         System.out.println(answer);
