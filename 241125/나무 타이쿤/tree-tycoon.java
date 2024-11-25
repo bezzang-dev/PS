@@ -48,8 +48,8 @@ public class Main {
             for (int i = 0; i < N; i++) {
                 for (int j = 0; j < N; j++) {
                     if (planted[i][j] == 1) {
-                        int nextRow = ((i + dir[current[0] - 1][0] * current[1]) % N + N) % N;
-                        int nextCol = ((j + dir[current[0] - 1][1] * current[1]) % N + N) % N;
+                        int nextRow = ((i + dir[current[0] - 1][0] * current[1]) + N * current[1]) % N;
+                        int nextCol = ((j + dir[current[0] - 1][1] * current[1]) + N * current[1]) % N;
                         nextPlanted[nextRow][nextCol] = 1;
                     }
                 }
