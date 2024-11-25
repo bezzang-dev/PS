@@ -78,8 +78,6 @@ public class Main {
                     if (map[i][j] >= 2 && planted[i][j] == 0) { // 영양제를 투입하지 않은 칸만
                         map[i][j] -= 2;
                         planted[i][j] = 1;
-                    } else {
-                        planted[i][j] = 0; // 기존 영양제 초기화
                     }
                 }
             }
