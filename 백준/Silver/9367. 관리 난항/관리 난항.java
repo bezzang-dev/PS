@@ -35,7 +35,7 @@ public class Main {
 
         void processAccident(double damageCost) {
             // 수리비는 올림 처리
-            this.totalCost += Math.ceil(damageCost);
+            this.totalCost += (int) Math.ceil(damageCost);
         }
     }
 
